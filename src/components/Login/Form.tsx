@@ -17,6 +17,7 @@ import {
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../services/login";
+import { changeLocalStorage } from "../../services/storage";
 import { AppContext } from "../AppContext";
 import { Logo } from "../Logo";
 import { OAuthButtonGroup } from "./OAuthButtonGroup";
@@ -35,6 +36,7 @@ export const Form = () => {
       return alert("Invalid email");
     }
     setIsLoggedIn(true);
+    changeLocalStorage({ login: true });
     navegate("/account/1");
   };
 

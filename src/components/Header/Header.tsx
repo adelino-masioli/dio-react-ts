@@ -22,6 +22,7 @@ import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 
 import { useContext } from "react";
 
+import { changeLocalStorage } from "../../services/storage";
 import { AppContext } from "../AppContext";
 import { Logo } from "../Logo";
 
@@ -50,6 +51,7 @@ export default function Header() {
   const navegate = useNavigate();
 
   const logout = () => {
+    changeLocalStorage({ login: false });
     setIsLoggedIn(false);
     navegate("/");
   };

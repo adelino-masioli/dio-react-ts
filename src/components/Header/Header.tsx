@@ -3,6 +3,7 @@ import {
   Avatar,
   Box,
   Button,
+  Link as ChakraLink,
   Flex,
   HStack,
   IconButton,
@@ -12,39 +13,48 @@ import {
   MenuItem,
   MenuList,
   Stack,
+  Text,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
+
+import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
+
+import { useContext } from "react";
+
+import { changeLocalStorage } from "../../services/storage";
+import { AppContext } from "../AppContext";
 import { Logo } from "../Logo";
 
 interface Props {
   children: React.ReactNode;
+  to: string;
 }
 
 const Links = ["Dashboard", "Projects", "Team"];
 
 const NavLink = (props: Props) => {
-  const { children } = props;
+  const { children, to } = props;
 
   return (
-    <Box
-      as="a"
-      px={2}
-      py={1}
-      rounded={"md"}
-      _hover={{
-        textDecoration: "none",
-        bg: useColorModeValue("gray.200", "gray.700"),
-      }}
-      href={"#"}
-    >
+    <ChakraLink as={ReactRouterLink} to={to} px={2} py={1}>
       {children}
-    </Box>
+    </ChakraLink>
   );
 };
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const { user, isLoggedIn, setIsLoggedIn } = useContext(AppContext);
+
+  const navegate = useNavigate();
+
+  const logout = () => {
+    changeLocalStorage({ login: false });
+    setIsLoggedIn(false);
+    navegate("/");
+  };
 
   return (
     <>
@@ -67,7 +77,9 @@ export default function Header() {
               display={{ base: "none", md: "flex" }}
             >
               {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+                <NavLink key={link} to="/account/1">
+                  {link}
+                </NavLink>
               ))}
             </HStack>
           </HStack>
@@ -80,18 +92,27 @@ export default function Header() {
                 cursor={"pointer"}
                 minW={0}
               >
-                <Avatar
-                  size={"sm"}
-                  src={
-                    "https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
-                  }
-                />
+                <Flex
+                  flexDirection={"column"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                >
+                  <Avatar
+                    size={"sm"}
+                    src={"https://avatars.githubusercontent.com/u/2363796?v=4"}
+                  />
+                  <Text as={"small"}>{user}</Text>
+                </Flex>
               </MenuButton>
               <MenuList>
-                <MenuItem>Link 1</MenuItem>
+                <MenuItem>Link 1 </MenuItem>
                 <MenuItem>Link 2</MenuItem>
-                <MenuDivider />
-                <MenuItem>Link 3</MenuItem>
+                {isLoggedIn && (
+                  <>
+                    <MenuDivider />
+                    <MenuItem onClick={logout}>Logout</MenuItem>
+                  </>
+                )}
               </MenuList>
             </Menu>
           </Flex>
@@ -101,7 +122,9 @@ export default function Header() {
           <Box pb={4} display={{ md: "none" }}>
             <Stack as={"nav"} spacing={4}>
               {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+                <NavLink key={link} to="/account/1">
+                  {link}
+                </NavLink>
               ))}
             </Stack>
           </Box>
